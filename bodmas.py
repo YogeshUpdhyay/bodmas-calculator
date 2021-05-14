@@ -23,57 +23,57 @@ class Calculator:
 
 		for i, char in enumerate(self.expr):
 			# if a char is not numeric, opertion sign or decimal point
-			if char not in '0123456789+-*/.()':
+			if char not in '0123456789+-*/.()|':
 				return False
 
 			# if there is no operation sign between a number and parentheses
-			if char.isnumeric() and self.expr[i + 1] == "(":
+			if char.isnumeric() and i+1 < len(self.expr) and self.expr[i + 1] == "(":
 				return False
 
 		return True
 
 	def solve(self, num_list, op_list):
 		for x,y in enumerate(op_list):
-			if y == '^':
+			if y == '**':
 				# if an exponential operator is detected
 
 				# appending operation to steps
-				self.steps.append('Raising power {} to {}'.format(num_list[x], num_list[x+1]))
+				self.steps.append('\nRaising power {} to {}'.format(num_list[x], num_list[x+1]))
 
 				num_list[x] = float(num_list[x]) ** num_list[x+1]
 
 				# appending output of the operation to steps
 				self.steps.append(num_list[x])
 
-				num_list.remove(num_list[x+1])
+				del num_list[x+1]
 				op_list.remove(y)
 		for x,y in enumerate(op_list):
 			if y == '/':
 				# if an division operator is detected
 
 				# appending operation to steps
-				self.steps.append('Dividing {} by {}'.format(num_list[x], num_list[x+1]))
+				self.steps.append('\nDividing {} by {}'.format(num_list[x], num_list[x+1]))
 
 				num_list[x] = float(num_list[x]) / num_list[x+1]
 
 				# appending output of the operation to steps
 				self.steps.append(num_list[x])
 
-				num_list.remove(num_list[x+1])
+				del num_list[x+1]
 				op_list.remove(y)
 		for x,y in enumerate(op_list):
 			if y == '*':
 				# if an multiplication operator is detected
 
 				# appending operation to steps
-				self.steps.append('Multiplying {} and {}'.format(num_list[x], num_list[x+1]))
+				self.steps.append('\nMultiplying {} and {}'.format(num_list[x], num_list[x+1]))
 
 				num_list[x] = float(num_list[x]) * num_list[x+1]
 
 				# appending output of the operation to steps
 				self.steps.append(num_list[x])
 
-				num_list.remove(num_list[x+1])
+				del num_list[x+1]
 				op_list.remove(y)
 		for x,y in enumerate(op_list):
 			if y == '+':
@@ -87,7 +87,7 @@ class Calculator:
 				# appending output of the operation to steps
 				self.steps.append(num_list[x])
 
-				num_list.remove(num_list[x+1])
+				del num_list[x+1]
 				op_list.remove(y)
 		for x,y in enumerate(op_list):
 			if y == '-':
@@ -101,7 +101,7 @@ class Calculator:
 				# appending output of the operation to steps
 				self.steps.append(num_list[x])
 
-				num_list.remove(num_list[x+1])
+				del num_list[x+1]
 				op_list.remove(y)
 		return num_list, op_list
 
@@ -111,54 +111,79 @@ class Calculator:
 		num_list = []
 		op_list = []
 		openparentheses_count = 0
+		absolute_operator_count = 0
 
-		for i,char in enumerate(equation):
+		count = 0
+		while count < len(equation):
 
 			# if opening parentheses is encountered 
 			# seperate out the substring between the parentheses
 			# solve the parentheses
-			if str(char) == '(':
+			if str(equation[count]) == "(":
 				openparentheses_count += 1
 				if openparentheses_count > 1:
-					temp += str(char)
-				continue 
-			elif str(char) == ')':
+					temp += equation[count]
+				count += 1
+				continue
+			elif str(equation[count]) == ")":
 				openparentheses_count -= 1
 				if openparentheses_count == 0:
-					temp= self.solve_equation(temp)
-					num_list.append(temp)
+					temp = self.solve_equation(temp)
+					num_list.append(float(temp))
+					temp = ''
 				else:
-					temp += str(char)
+					temp += equation[count]
+				count += 1
 				continue
+
+			if str(equation[count]) == '|' and openparentheses_count == 0:
+				if absolute_operator_count == 1:
+					absolute_operator_count = 0
+					temp = abs(float(temp))
+					num_list.append(temp)
+					temp = ''
+				else:
+					absolute_operator_count += 1
+				count += 1
+				continue
+
 			
 			# if at any point closing parentheses are before opening parentheses
 			if openparentheses_count < 0:
 				sys.stderr.write("Invalid Expression")
 			
-			if openparentheses_count > 0:
+			if openparentheses_count > 0 or absolute_operator_count > 0:
 				# if parentheses are open
-				temp += str(char)
+				temp += str(equation[count])
+				count += 1
 			else:
 				
-				if str(char) in '0123456789.':
-					# if the character is a numeric
-					temp = temp + str(char) 
+				if str(equation[count]) in '0123456789.':
+					# if the equation[count]acter is a numeric
+					temp = temp + str(equation[count]) 
 				else:
 					# if a number is found
 					if temp != '':
 						num_list.append(float(temp))
 					temp = ''
 
-					# operator list 
-					op_list.append(char)
+					# operator list
+					if equation[count] == "*" and equation[count+1] == "*": 
+						op_list.append("**")
+						del equation[count+1]
+					else:
+						op_list.append(equation[count])
 
 				# if the list has been traversed completely	
-				if i+1 is len(equation):
+				if count+1 is len(equation):
 					num_list.append(float(temp))
 					temp = ''
+				count += 1
 
 		# solving the equation and appendin the steps
 		num_list, op_list = self.solve(num_list, op_list)
+		while ('+' in op_list) or ('-' in op_list) or ('*' in op_list) or ('/' in op_list) or ('^' in op_list):
+			num_list, op_list = self.solve(num_list, op_list)
 
 		return num_list[0]
 
@@ -179,7 +204,7 @@ class Calculator:
 		print('\nINPUT: {}'.format(self.input))
 		print('OUTPUT: {}'.format(self.output))
 
-		print("\nSTEP BY STEP CALCULATION\n")
+		print("\nSTEP BY STEP CALCULATION")
 
 		for step in self.steps:
 			print(step)
