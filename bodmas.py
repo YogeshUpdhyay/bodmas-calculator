@@ -150,7 +150,8 @@ class Calculator:
 			
 			# if at any point closing parentheses are before opening parentheses
 			if openparentheses_count < 0:
-				sys.stderr.write("Invalid Expression")
+				sys.stderr.write("Invalid Expression\n")
+				sys.exit()
 			
 			if openparentheses_count > 0 or absolute_operator_count > 0:
 				# if parentheses are open
@@ -191,7 +192,8 @@ class Calculator:
 
 		# if an invalid string is detected
 		if not self.validate():
-			sys.stderr.write("Invalid Expression")
+			sys.stderr.write("Invalid Expression\n")
+			sys.exit()
 
 		self.output = self.solve_equation(self.expr)
 
