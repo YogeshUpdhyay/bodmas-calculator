@@ -47,6 +47,7 @@ class Calculator:
 
 				del num_list[x+1]
 				op_list.remove(y)
+				
 		for x,y in enumerate(op_list):
 			if y == '/':
 				# if an division operator is detected
@@ -61,6 +62,7 @@ class Calculator:
 
 				del num_list[x+1]
 				op_list.remove(y)
+
 		for x,y in enumerate(op_list):
 			if y == '*':
 				# if an multiplication operator is detected
@@ -75,6 +77,7 @@ class Calculator:
 
 				del num_list[x+1]
 				op_list.remove(y)
+
 		for x,y in enumerate(op_list):
 			if y == '+':
 				# if an addition operator is detected
@@ -89,7 +92,7 @@ class Calculator:
 
 				del num_list[x+1]
 				op_list.remove(y)
-		for x,y in enumerate(op_list):
+
 			if y == '-':
 				# if an subtraction operator is detected
 
@@ -103,6 +106,7 @@ class Calculator:
 
 				del num_list[x+1]
 				op_list.remove(y)
+
 		return num_list, op_list
 
 	def solve_equation(self, equation) -> float:
