@@ -63,7 +63,6 @@ class Calculator:
 				del num_list[x+1]
 				op_list.remove(y)
 
-		for x,y in enumerate(op_list):
 			if y == '*':
 				# if an multiplication operator is detected
 
@@ -139,11 +138,12 @@ class Calculator:
 					temp += equation[count]
 				count += 1
 				continue
-
+			
+			# if an absolute operator is detected
 			if str(equation[count]) == '|' and openparentheses_count == 0:
 				if absolute_operator_count == 1:
 					absolute_operator_count = 0
-					temp = abs(float(temp))
+					temp = abs(float(eval(temp)))
 					num_list.append(temp)
 					temp = ''
 				else:
@@ -199,12 +199,7 @@ class Calculator:
 			sys.stderr.write("Invalid Expression\n")
 			sys.exit()
 
-		# if an exception occurs while solving the equation
-		try:
-			self.output = self.solve_equation(self.expr)
-		except Exception as e:
-			sys.stderr.write("Invalid Expression")
-			sys.exit()
+		self.output = self.solve_equation(self.expr)
 
 		# printing the output
 		self.present_output()
@@ -222,6 +217,11 @@ class Calculator:
 
 
 if __name__ == "__main__":
-	expr = input("Enter the expression:\n")
-	calculator = Calculator(expr)
-	calculator.calculate()
+	# expr = input("Enter the expression:\n")
+	with open('example.txt') as f:
+		inputs = f.read().splitlines()
+		for i, expr in enumerate(inputs):
+			print("############ {}".format(str(i)))
+			calculator = Calculator(expr)
+			calculator.calculate()
+		f.close()

@@ -32,10 +32,15 @@ Adding 1.0 and 10.4
 ```
 
 ## Instructions
+- For running on a single input in the console
 ```
 python3 bodmas.py
 ```
 
+- For reading the testcases fron example.txt file
+```
+python3 bodmas_test.py
+```
 ## The approach for the problem is explained by adding comments wherever necessary in the code.
 
 
