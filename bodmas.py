@@ -10,8 +10,12 @@ class Calculator:
 
 		self.expr = expr
 
+
 	def validate(self) -> bool:
 		# validate expression string
+
+		if len(self.expr) == 0:
+			return False
 
 		self.expr = self.expr.replace(" ", "")
 		self.expr = list(self.expr)
@@ -63,7 +67,6 @@ class Calculator:
 				del num_list[x+1]
 				op_list.remove(y)
 
-		for x,y in enumerate(op_list):
 			if y == '*':
 				# if an multiplication operator is detected
 
@@ -139,11 +142,12 @@ class Calculator:
 					temp += equation[count]
 				count += 1
 				continue
-
+			
+			# if an absolute operator is detected
 			if str(equation[count]) == '|' and openparentheses_count == 0:
 				if absolute_operator_count == 1:
 					absolute_operator_count = 0
-					temp = abs(float(temp))
+					temp = abs(float(eval(temp)))
 					num_list.append(temp)
 					temp = ''
 				else:
@@ -163,8 +167,15 @@ class Calculator:
 				count += 1
 			else:
 				
-				if str(equation[count]) in '0123456789.':
+				if equation[count] in '1234567890.':
 					# if the equation[count]acter is a numeric
+					try:
+						if equation[count-1] in '-+':
+							if count == 1 or equation[count-2] in '-+*/)':
+								op_list.pop()
+								temp+=equation[count-1]
+					except Exception as e:
+						pass
 					temp = temp + str(equation[count]) 
 				else:
 					# if a number is found
@@ -192,6 +203,7 @@ class Calculator:
 
 		return num_list[0]
 
+
 	def calculate(self) -> float:
 
 		# if an invalid string is detected
@@ -199,11 +211,10 @@ class Calculator:
 			sys.stderr.write("Invalid Expression\n")
 			sys.exit()
 
-		# if an exception occurs while solving the equation
 		try:
 			self.output = self.solve_equation(self.expr)
 		except Exception as e:
-			sys.stderr.write("Invalid Expression")
+			sys.stderr.write("Invalid Expression\n")
 			sys.exit()
 
 		# printing the output

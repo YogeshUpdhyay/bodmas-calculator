@@ -37,7 +37,7 @@ Adding 1.0 and 10.4
 python3 bodmas.py
 ```
 
-- For reading the testcases fron example.txt file
+- For reading the testcases from example.txt file
 ```
 python3 bodmas_test.py
 ```

@@ -10,8 +10,12 @@ class Calculator:
 
 		self.expr = expr
 
+
 	def validate(self) -> bool:
 		# validate expression string
+
+		if len(self.expr) == 0:
+			return False
 
 		self.expr = self.expr.replace(" ", "")
 		self.expr = list(self.expr)
@@ -163,8 +167,15 @@ class Calculator:
 				count += 1
 			else:
 				
-				if str(equation[count]) in '0123456789.':
+				if equation[count] in '1234567890.':
 					# if the equation[count]acter is a numeric
+					try:
+						if equation[count-1] in '-+':
+							if count == 1 or equation[count-2] in '-+*/)':
+								op_list.pop()
+								temp+=equation[count-1]
+					except Exception as e:
+						pass
 					temp = temp + str(equation[count]) 
 				else:
 					# if a number is found
@@ -192,6 +203,7 @@ class Calculator:
 
 		return num_list[0]
 
+
 	def calculate(self) -> float:
 
 		# if an invalid string is detected
@@ -199,7 +211,11 @@ class Calculator:
 			sys.stderr.write("Invalid Expression\n")
 			sys.exit()
 
-		self.output = self.solve_equation(self.expr)
+		try:
+			self.output = self.solve_equation(self.expr)
+		except Exception as e:
+			sys.stderr.write("Invalid Expression\n")
+			sys.exit()
 
 		# printing the output
 		self.present_output()
@@ -214,7 +230,6 @@ class Calculator:
 
 		for step in self.steps:
 			print(step)
-
 
 if __name__ == "__main__":
 	# expr = input("Enter the expression:\n")
